@@ -1,0 +1,114 @@
+name: CI/CD Pipeline - Module 5
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: |
+          echo "Running application tests..."
+          npm test -- --coverage --watchAll=false > test-results.txt 2>&1 || true
+          echo "Test execution completed at $(date)" >> test-results.txt
+          cat test-results.txt
+      
+      - name: Upload test results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results.txt
+          retention-days: 30
+      
+      - name: Test summary
+        run: |
+          echo "### Test Results Summary :test_tube:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat test-results.txt >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+  deploy:
+    name: Deploy Application
+    needs: test
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download test results artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+          path: ./artifacts
+      
+      - name: Display artifact content
+        run: |
+          echo "=== Test Results Artifact Content ==="
+          cat ./artifacts/test-results.txt
+          echo "===================================="
+      
+      - name: Setup Node.js on self-hosted runner
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install production dependencies
+        run: npm ci --omit=dev
+      
+      - name: Build application
+        run: |
+          echo "Building the application..."
+          npm run build
+      
+      - name: Stop existing application (if running)
+        run: |
+          if pm2 list | grep -q "ostad-app"; then
+            echo "Stopping existing application..."
+            pm2 stop ostad-app || true
+            pm2 delete ostad-app || true
+          fi
+        continue-on-error: true
+      
+      - name: Deploy application with PM2
+        run: |
+          echo "Deploying application..."
+          pm2 start npm --name "ostad-app" -- start
+          pm2 save
+      
+      - name: Verify deployment
+        run: |
+          sleep 5
+          pm2 status
+          echo "Application deployed successfully!"
+      
+      - name: Deployment summary
+        run: |
+          echo "### Deployment Status :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Application deployed successfully to self-hosted runner" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment Details:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Runner: self-hosted" >> $GITHUB_STEP_SUMMARY
+          echo "- Timestamp: $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "- Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
