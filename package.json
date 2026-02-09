@@ -4,6 +4,7 @@
   "scripts": {
     "start": "node src/server.js",
     "test": "mocha test/**/*.test.js",
+    "build": "echo 'No build step required'",
     "check": "mocha test/**/*.test.js",
     "dev": "node src/server.js"
   },
