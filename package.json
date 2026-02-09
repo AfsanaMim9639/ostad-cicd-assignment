@@ -1,9 +1,9 @@
 {
   "name": "node-express-app",
   "version": "1.0.0",
-
   "scripts": {
     "start": "node src/server.js",
+    "test": "mocha test/**/*.test.js",
     "check": "mocha test/**/*.test.js",
     "dev": "node src/server.js"
   },

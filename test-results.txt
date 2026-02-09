@@ -1,0 +1,15 @@
+
+> node-express-app@1.0.0 test
+> mocha test/**/*.test.js --coverage --watchAll=false
+
+
+
+  Server Tests
+    GET /
+      √ should return HTML file
+    GET /api
+      √ should return Hello World message
+
+
+  2 passing (40ms)
+
