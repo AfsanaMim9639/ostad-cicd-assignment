@@ -1,0 +1,12 @@
+﻿{
+  "repositoryName": "AfsanaMim9639/ostad-cicd-assignment",
+  "pipelineDirectory": "ostad-cicd-assignment",
+  "workspaceDirectory": "ostad-cicd-assignment\\ostad-cicd-assignment",
+  "repositories": {
+    "AfsanaMim9639/ostad-cicd-assignment": {
+      "repositoryPath": "ostad-cicd-assignment\\ostad-cicd-assignment",
+      "lastRunOn": "02/09/2026 22:30:17 +06:00"
+    }
+  },
+  "lastRunOn": "02/09/2026 22:31:51 +06:00"
+}

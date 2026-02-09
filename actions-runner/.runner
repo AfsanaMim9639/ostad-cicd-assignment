@@ -1,0 +1,11 @@
+﻿{
+  "agentId": 2,
+  "agentName": "DESKTOP-0KI5AJJ",
+  "poolId": 1,
+  "poolName": "Default",
+  "serverUrl": "https://pipelinesghubeus5.actions.githubusercontent.com/LcImnbk9z1CT9RL1vouUjOXwF6pvR5ZNI9IsKbPCdBib5m3HH5/",
+  "gitHubUrl": "https://github.com/AfsanaMim9639/ostad-cicd-assignment",
+  "workFolder": "_work",
+  "useV2Flow": true,
+  "serverUrlV2": "https://broker.actions.githubusercontent.com/"
+}
